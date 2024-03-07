@@ -11,16 +11,20 @@ echo $@
 SUBJECT_MAT=$1
 shift
 PARAMS=$1
+shift
+E_MAT=$1
+shift
+MNI_MAT=$1
 
 dt=`date --utc +%Y%m%d-%H%M%S`
 
 echo dt 
 
-OUTPUTFOLDER_NOTEBOOK="/outputfiles/${dt}_preprocessing_notebook"
-OUTPUTFOLDER_IMAGES="/outputfiles/${dt}_images/"
+OUTPUTFOLDER_NOTEBOOK="/outputfiles/${dt}_fullProcessing_notebook"
+OUTPUTFOLDER_SAVEMAT="/outputfiles/${dt}_saved_mat/"
 
-mkdir $OUTPUTFOLDER_NOTEBOOK $OUTPUTFOLDER_IMAGES
+mkdir $OUTPUTFOLDER_NOTEBOOK $OUTPUTFOLDER_SAVEMAT
 
-echo 'papermill neuro_dot/NeuroDOT_PreProcessing_Notebook.ipynb $OUTPUTFOLDER_NOTEBOOK/output.ipynb -p patient_data /input/$SUBJECT_MAT -p params_file /input/$PARAMS -p saveImagePath $OUTPUTFOLDER_IMAGES'
+echo 'papermill neuro_dot/NeuroDOT_PreProcessing_Script_dynamicFilterMode_updated.ipynb $OUTPUTFOLDER_NOTEBOOK/output.ipynb -p patient_data /input/$SUBJECT_MAT -p params_file /input/$PARAMS -p saveMatPath $OUTPUTFOLDER_SAVEMAT'
 
-papermill neuro_dot/NeuroDOT_PreProcessing_Notebook.ipynb $OUTPUTFOLDER_NOTEBOOK/output.ipynb -p participant_data /input/$SUBJECT_MAT -p params_file /input/$PARAMS -p saveImagePath $OUTPUTFOLDER_IMAGES
+papermill neuro_dot/NeuroDot_FullProcessingPipeline.ipynb $OUTPUTFOLDER_NOTEBOOK/output.ipynb -p participant_data $SUBJECT_MAT -p params_file $PARAMS -p saveMatPath $OUTPUTFOLDER_SAVEMAT -p Emat $E_MAT -p MNI_file $MNI_MAT --log-output --progress-bar
