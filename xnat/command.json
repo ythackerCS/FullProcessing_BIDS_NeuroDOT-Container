@@ -1,10 +1,10 @@
 {
-    "name": "neurodot-preprocessingpipelinebids",
-    "label": "neurodot-preprocessingpipelinebids",
-    "description": "Runs preprocessing pipeline on subject mat for bids data",
+    "name": "neurodot-fullprocessingneurodotbids",
+    "label": "neurodot-fullprocessingneurodotbids",
+    "description": "Runs full processing pipeline on subject mat for bids data",
     "version": "1.0",
     "schema-version": "1.0",
-    "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/preprocessingneurodot_bids:latest",
+    "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/fullprocessingneurodot_bids:latest",
     "type": "docker",
     "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS#",
     "override-entrypoint": true,
@@ -48,9 +48,9 @@
     ],
     "xnat": [
       {
-        "name": "Run preprocessing pipleine with subject data mounted",
-        "label": "Preprocessing Pipeline",
-        "description": "Analyze patient data using preprocessing pipleine with resource folder mounted",
+        "name": "Run fullprocessing pipleine with subject data mounted",
+        "label": "Fullprocessing Pipeline",
+        "description": "Analyze patient data using full processing pipleine with resource folder mounted",
         "contexts": [
           "xnat:imageScanData"
         ],
