@@ -1,0 +1,138 @@
+{
+    "name": "neurodot-preprocessingpipelinebids",
+    "label": "neurodot-preprocessingpipelinebids",
+    "description": "Runs preprocessing pipeline on subject mat for bids data",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/preprocessingneurodot_bids:latest",
+    "type": "docker",
+    "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS#",
+    "override-entrypoint": true,
+    "mounts": [
+      {
+        "name": "out",
+        "writable": true,
+        "path": "/outputfiles/"
+      },
+      {
+        "name": "scan-in",
+        "writable": false,
+        "path": "/input/"
+      }
+    ],
+    "environment-variables": {},
+    "ports": {},
+    "inputs": [
+      {
+        "name": "SUBJECT_MAT",
+        "type": "string",
+        "required": true,
+        "replacement-key": "#SUBJECT_MAT#",
+        "select-values": []
+      },
+      {
+        "name": "PARAMS",
+        "type": "string",
+        "required": true,
+        "replacement-key": "#PARAMS#",
+        "select-values": []
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "description": "The process output.",
+        "required": true,
+        "mount": "out"
+      }
+    ],
+    "xnat": [
+      {
+        "name": "Run preprocessing pipleine with subject data mounted",
+        "label": "Preprocessing Pipeline",
+        "description": "Analyze patient data using preprocessing pipleine with resource folder mounted",
+        "contexts": [
+          "xnat:imageScanData"
+        ],
+        "external-inputs": [
+          {
+            "name": "scan",
+            "description": "Input scan",
+            "type": "Scan",
+            "matcher": "",
+            "required": true,
+            "load-children": true
+          }
+        ],
+        "derived-inputs": [
+          {
+            "name": "scanResource",
+            "type": "Resource",
+            "matcher": "@.label =~ /.*FNIRS.*/i",
+            "required": true,
+            "provides-files-for-command-mount": "scan-in",
+            "user-settable": true,
+            "load-children": true,
+            "derived-from-wrapper-input": "scan",
+            "multiple": false
+          },
+          {
+            "name": "subject-mat-file",
+            "type": "File",
+            "matcher": "@.label =~ /.*.mat.*/i",
+            "required": true,
+            "load-children": true,
+            "derived-from-wrapper-input": "scanResource",
+            "multiple": false
+          },
+          {
+            "name": "subject-mat-name",
+            "type": "string",
+            "required": true,
+            "provides-value-for-command-input": "SUBJECT_MAT",
+            "user-settable": true,
+            "load-children": true,
+            "derived-from-wrapper-input": "subject-mat-file",
+            "derived-from-xnat-object-property": "name",
+            "multiple": false
+          },
+          {
+            "name": "params-file",
+            "type": "File",
+            "matcher": "@.label =~ /.*param.*/i",
+            "required": true,
+            "load-children": true,
+            "derived-from-wrapper-input": "scanResource",
+            "multiple": false
+          },
+          {
+            "name": "params-name",
+            "type": "string",
+            "required": true,
+            "provides-value-for-command-input": "PARAMS",
+            "user-settable": true,
+            "load-children": true,
+            "derived-from-wrapper-input": "params-file",
+            "derived-from-xnat-object-property": "name",
+            "multiple": false
+          }
+        ],
+        "output-handlers": [
+          {
+            "name": "output-resource",
+            "accepts-command-output": "output",
+            "as-a-child-of": "scan",
+            "type": "Resource",
+            "label": "RESULTS",
+            "tags": []
+          }
+        ]
+      }
+    ],
+    "reserve-memory": 8192,
+    "limit-memory": 8192,
+    "container-labels": {},
+    "generic-resources": {},
+    "ulimits": {},
+    "secrets": []
+  }
