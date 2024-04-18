@@ -6,7 +6,7 @@
     "schema-version": "1.0",
     "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/fullprocessingneurodot_bids:latest",
     "type": "docker",
-    "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/MNI_files/#MNI_MAT#",
+    "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/Atlases/#MNI_FILE# /Project/A_MAT/#A_MAT# /Project/Atlases/#MNI_path#",
     "override-entrypoint": true,
     "mounts": [
       {
@@ -27,12 +27,7 @@
       {
         "name": "mni-in",
         "writable": false,
-        "path": "/Project/MNI_files"
-      },
-      {
-        "name": "cortical-in",
-        "writable": false,
-        "path": "/Project/Cortical_Meshes"
+        "path": "/Project/Atlases"
       },
       {
         "name": "out",
@@ -70,10 +65,10 @@
         "select-values": []
       },
       {
-        "name": "MNIMAT",
+        "name": "MNIFILE",
         "type": "string",
         "required": true,
-        "replacement-key": "#MNI_MAT#",
+        "replacement-key": "#MNI_FILE#",
         "select-values": []
       }
     ],
@@ -169,7 +164,7 @@
             "name": "mni-file-name",
             "type": "string",
             "required": true,
-            "provides-value-for-command-input": "MNIMAT",
+            "provides-value-for-command-input": "MNIFILE",
             "user-settable": false,
             "load-children": true,
             "derived-from-wrapper-input": "mni-file",
