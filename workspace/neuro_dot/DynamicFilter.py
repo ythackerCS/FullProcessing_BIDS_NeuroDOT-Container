@@ -1,7 +1,7 @@
 # Import all necessary Python modules
 import numpy as np 
 import scipy.io as sio
-import sys  
+import sys,os  
 import matplotlib.pyplot as plt  
 import math
 import numpy.matlib as nm
@@ -11,20 +11,15 @@ import matplotlib.gridspec as gridspec
 from matplotlib.cm import jet
 import copy
 # Add all relevant paths (e.g. folders containing NeuroDOT functions and data)
-sys.path.insert(0,'E:/Emma/NURO_DOT_dev/Individual_Functions/')
-sys.path.insert(0,'E:/Emma/NURO_DOT_dev/Matlab_Equivalent_Functions/')
-sys.path.insert(0,'E:/Emma/NURO_DOT_dev/Individual_Functions/Analysis/')
-sys.path.insert(0,'E:/Emma/NURO_DOT_dev/Individual_Functions/File_IO/')
-sys.path.insert(0,'E:/Emma/NURO_DOT_dev/Individual_Functions/Temporal_Transforms/')
-sys.path.insert(0,'E:/Emma/NURO_DOT_dev/Individual_Functions/Visualizations/')
-sys.path.insert(0, '/jupyter/nuro_dot/NURO_DOT_dev/')
-sys.path.insert(0,'E:/python_codes/NeuroDOT_dev/Data')
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'neuro_dot'))
+
+
 
 # Import all functions that will be used in the pipeline (consider using __init__ file instead)
 # In __init__ file in 'Individual Functions' directory, change the path to your system folders
 # containing each function folder
 
-sys.path.insert(0,'E:/Emma/NURO_DOT_dev/neuro_dot')
+
 from Visualizations import viz
 from Spatial_Transforms import sx4m
 from Temporal_Transforms import tx4m
@@ -34,7 +29,7 @@ from Analysis import anlys
 from Matlab_Equivalent_Functions import matlab
 
 
-def DynamicFilter(input_data, info_in, params, mode, patient_data, save = 'no', pathToSave = './'):
+def DynamicFilter(input_data, info_in, params, mode, save = 'no', pathToSave = './'):
     lmdata = tx4m.logmean(input_data)[0]
     __info = copy.deepcopy(info_in)
     keep = np.logical_and(np.logical_and(np.where(__info['pairs']['WL'] == 2,1,0), np.where(__info['pairs']['r2d'] < 40,1,0)), __info['MEAS']['GI']) # measurements to include
@@ -279,7 +274,7 @@ def DynamicFilter(input_data, info_in, params, mode, patient_data, save = 'no', 
     #     ax2.set_xlim([np.min(figdata[keepd2,:]), np.max(figdata[keepd2,:])])
     #     ax3.set_xlim([np.min(figdata[keepd3,:]), np.max(figdata[keepd3,:])])
 
-    tag = patient_data.split("/")[-1].split("_")[-1][:-4]
+    tag = __info['io']['tag']
     filename = pathToSave + mode +'_' + tag + '.png'  
     print(filename)  
     if save == 'yes':
