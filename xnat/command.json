@@ -1,266 +1,313 @@
 {
-    "name": "neurodot-fullprocessingneurodotbids",
-    "label": "neurodot-fullprocessingneurodotbids",
-    "description": "Runs full processing pipeline on subject mat for bids data",
-    "version": "1.0",
-    "schema-version": "1.0",
-    "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/fullprocessingneurodot_bids:latest",
-    "type": "docker",
-    "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/Atlases/#MNI_FILE# /Project/A_MAT/#A_MAT# /Project/Atlases/#MNI_path#",
-    "override-entrypoint": true,
-    "mounts": [
-      {
-        "name": "patient-mat-in",
-        "writable": false,
-        "path": "/Subject/"
-      },
-      {
-        "name": "emat-in",
-        "writable": false,
-        "path": "/Project/E_matrices"
-      },
-      {
-        "name": "amat-in",
-        "writable": false,
-        "path": "/Project/A_matrices"
-      },
-      {
-        "name": "mni-in",
-        "writable": false,
-        "path": "/Project/Atlases"
-      },
-      {
-        "name": "out",
-        "writable": true,
-        "path": "/outputfiles/"
-      },
-      {
-        "name": "scan-in",
-        "writable": false,
-        "path": "/input/"
-      }
-    ],
-    "environment-variables": {},
-    "ports": {},
-    "inputs": [
-      {
-        "name": "SUBJECT_MAT",
-        "type": "string",
-        "required": true,
-        "replacement-key": "#SUBJECT_MAT#",
-        "select-values": []
-      },
-      {
-        "name": "PARAMS",
-        "type": "string",
-        "required": true,
-        "replacement-key": "#PARAMS#",
-        "select-values": []
-      },
-      {
-        "name": "EMAT",
-        "type": "string",
-        "required": true,
-        "replacement-key": "#E_MAT#",
-        "select-values": []
-      },
-      {
-        "name": "MNIFILE",
-        "type": "string",
-        "required": true,
-        "replacement-key": "#MNI_FILE#",
-        "select-values": []
-      }
-    ],
-    "outputs": [
-      {
-        "name": "output",
-        "description": "The process output.",
-        "required": true,
-        "mount": "out"
-      }
-    ],
-    "xnat": [
-      {
-        "name": "Run fullprocessing pipleine with subject data mounted",
-        "label": "Fullprocessing Pipeline",
-        "description": "Analyze patient data using full processing pipleine with resource folder mounted",
-        "contexts": [
-          "xnat:imageScanData"
-        ],
-        "external-inputs": [
-          {
-            "name": "scan",
-            "description": "Input scan",
-            "type": "Scan",
-            "matcher": "",
-            "required": true,
-            "load-children": true
-          }
-        ],
-        "derived-inputs": [
-          {
-            "name": "project",
-            "description": "Input project",
-            "type": "Project",
-            "required": true,
-            "provides-files-for-command-mount": "project-files-in",
-            "load-children": true,
-            "derived-from-wrapper-input": "subject",
-            "multiple": false
-          },
-          {
-            "name": "emat-resource",
-            "type": "Resource",
-            "matcher": "@.label =~ /E_matrices.*/i",
-            "required": true,
-            "provides-files-for-command-mount": "emat-in",
-            "user-settable": true,
-            "load-children": false,
-            "derived-from-wrapper-input": "project",
-            "multiple": false
-          },
-          {
-            "name": "emat-file",
-            "type": "File",
-            "matcher": "@.label =~ /.*E.*/i",
-            "required": true,
-            "load-children": true,
-            "derived-from-wrapper-input": "emat-resource",
-            "multiple": false
-          },
-          {
-            "name": "emat-file-name",
-            "type": "string",
-            "required": true,
-            "provides-value-for-command-input": "EMAT",
-            "user-settable": false,
-            "load-children": true,
-            "derived-from-wrapper-input": "emat-file",
-            "derived-from-xnat-object-property": "name",
-            "multiple": false
-          },
-          {
-            "name": "mni-resource",
-            "type": "Resource",
-            "matcher": "@.label =~ /MNI_files.*/i",
-            "required": true,
-            "provides-files-for-command-mount": "mni-in",
-            "user-settable": true,
-            "load-children": false,
-            "derived-from-wrapper-input": "project",
-            "multiple": false
-          },
-          {
-            "name": "mni-file",
-            "type": "File",
-            "matcher": "@.label =~ /.*MNI.*/i",
-            "required": true,
-            "load-children": true,
-            "derived-from-wrapper-input": "mni-resource",
-            "multiple": false
-          },
-          {
-            "name": "mni-file-name",
-            "type": "string",
-            "required": true,
-            "provides-value-for-command-input": "MNIFILE",
-            "user-settable": false,
-            "load-children": true,
-            "derived-from-wrapper-input": "mni-file",
-            "derived-from-xnat-object-property": "name",
-            "multiple": false
-          },
-          {
-            "name": "amat-resource",
-            "type": "Resource",
-            "matcher": "@.label =~ /A_matrices.*/i",
-            "required": true,
-            "provides-files-for-command-mount": "amat-in",
-            "user-settable": true,
-            "load-children": false,
-            "derived-from-wrapper-input": "project",
-            "multiple": false
-          },
-          {
-            "name": "cortical-resource",
-            "type": "Resource",
-            "matcher": "@.label =~ /Cortical_Meshes.*/i",
-            "required": true,
-            "provides-files-for-command-mount": "cortical-in",
-            "user-settable": true,
-            "load-children": false,
-            "derived-from-wrapper-input": "project",
-            "multiple": false
-          },
-          {
-            "name": "scanResource",
-            "type": "Resource",
-            "matcher": "@.label =~ /.*FNIRS.*/i",
-            "required": true,
-            "provides-files-for-command-mount": "scan-in",
-            "user-settable": true,
-            "load-children": true,
-            "derived-from-wrapper-input": "scan",
-            "multiple": false
-          },
-          {
-            "name": "subject-mat-file",
-            "type": "File",
-            "matcher": "@.label =~ /.*.mat.*/i",
-            "required": true,
-            "load-children": true,
-            "derived-from-wrapper-input": "scanResource",
-            "multiple": false
-          },
-          {
-            "name": "subject-mat-name",
-            "type": "string",
-            "required": true,
-            "provides-value-for-command-input": "SUBJECT_MAT",
-            "user-settable": true,
-            "load-children": true,
-            "derived-from-wrapper-input": "subject-mat-file",
-            "derived-from-xnat-object-property": "name",
-            "multiple": false
-          },
-          {
-            "name": "params-file",
-            "type": "File",
-            "matcher": "@.label =~ /.*param.*/i",
-            "required": true,
-            "load-children": true,
-            "derived-from-wrapper-input": "scanResource",
-            "multiple": false
-          },
-          {
-            "name": "params-name",
-            "type": "string",
-            "required": true,
-            "provides-value-for-command-input": "PARAMS",
-            "user-settable": true,
-            "load-children": true,
-            "derived-from-wrapper-input": "params-file",
-            "derived-from-xnat-object-property": "name",
-            "multiple": false
-          }
-        ],
-        "output-handlers": [
-          {
-            "name": "output-resource",
-            "accepts-command-output": "output",
-            "as-a-child-of": "scan",
-            "type": "Resource",
-            "label": "RESULTS",
-            "tags": []
-          }
-        ]
-      }
-    ],
-    "reserve-memory": 8192,
-    "limit-memory": 8192,
-    "container-labels": {},
-    "generic-resources": {},
-    "ulimits": {},
-    "secrets": []
-  }
+  "name": "neurodot-fullprocessingneurodotbids",
+  "label": "neurodot-fullprocessingneurodotbids",
+  "description": "Runs full processing pipeline on subject mat for bids data",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/fullprocessingneurodot_bids:latest",
+  "type": "docker",
+  "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/Atlases/#MNI_FILE# /Project/A_matrices/#A_MAT# /Project/Atlases/#MNI_path#",
+  "override-entrypoint": true,
+  "mounts": [
+    {
+      "name": "patient-mat-in",
+      "writable": false,
+      "path": "/Subject/"
+    },
+    {
+      "name": "emat-in",
+      "writable": false,
+      "path": "/Project/E_matrices"
+    },
+    {
+      "name": "amat-in",
+      "writable": false,
+      "path": "/Project/A_matrices"
+    },
+    {
+      "name": "out",
+      "writable": true,
+      "path": "/outputfiles/"
+    },
+    {
+      "name": "scan-in",
+      "writable": false,
+      "path": "/input/"
+    },
+    {
+      "name": "atlases-in",
+      "writable": false,
+      "path": "/Project/Atlases"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "SUBJECT_MAT",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SUBJECT_MAT#",
+      "select-values": []
+    },
+    {
+      "name": "PARAMS",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#PARAMS#",
+      "select-values": []
+    },
+    {
+      "name": "EMAT",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#E_MAT#",
+      "select-values": []
+    },
+    {
+      "name": "AMAT",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#A_MAT#",
+      "select-values": []
+    },
+    {
+      "name": "Atlas_Vol",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#MNI_FILE#",
+      "select-values": []
+    },
+    {
+      "name": "Atlas_Surf",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#MNI_path#",
+      "select-values": []
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "description": "The process output.",
+      "required": true,
+      "mount": "out"
+    }
+  ],
+  "xnat": [
+    {
+      "name": "Run fullprocessing pipleine with subject data mounted",
+      "label": "Fullprocessing Pipeline",
+      "description": "Analyze patient data using full processing pipleine with resource folder mounted",
+      "contexts": [
+        "xnat:imageScanData"
+      ],
+      "external-inputs": [
+        {
+          "name": "scan",
+          "description": "Input scan",
+          "type": "Scan",
+          "matcher": "",
+          "required": true,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "scanResource",
+          "type": "Resource",
+          "matcher": "@.label =~ /.*FNIRS.*/i",
+          "required": true,
+          "provides-files-for-command-mount": "scan-in",
+          "user-settable": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "scan",
+          "multiple": false
+        },
+        {
+          "name": "subject-mat-file",
+          "type": "File",
+          "matcher": "@.label =~ /.*.mat.*/i",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "scanResource",
+          "multiple": false
+        },
+        {
+          "name": "subject-mat-name",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "SUBJECT_MAT",
+          "user-settable": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "subject-mat-file",
+          "derived-from-xnat-object-property": "name",
+          "multiple": false
+        },
+        {
+          "name": "params-file",
+          "type": "File",
+          "matcher": "@.label =~ /.*param.*/i",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "scanResource",
+          "multiple": false
+        },
+        {
+          "name": "params-name",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "PARAMS",
+          "user-settable": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "params-file",
+          "derived-from-xnat-object-property": "name",
+          "multiple": false
+        },
+        {
+          "name": "session",
+          "description": "Session",
+          "type": "Session",
+          "required": true,
+          "load-children": false,
+          "derived-from-wrapper-input": "scan",
+          "multiple": false
+        },
+        {
+          "name": "project",
+          "description": "Input project",
+          "type": "Project",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "multiple": false
+        },
+        {
+          "name": "amat-resource",
+          "type": "Resource",
+          "matcher": "@.label =~ /A_matrices.*/i",
+          "required": true,
+          "provides-files-for-command-mount": "amat-in",
+          "user-settable": true,
+          "load-children": false,
+          "derived-from-wrapper-input": "project",
+          "multiple": false
+        },
+        {
+          "name": "Amat-file",
+          "type": "File",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "amat-resource",
+          "multiple": false
+        },
+        {
+          "name": "emat-resource",
+          "type": "Resource",
+          "matcher": "@.label =~ /E_matrices.*/i",
+          "required": true,
+          "provides-files-for-command-mount": "emat-in",
+          "user-settable": true,
+          "load-children": false,
+          "derived-from-wrapper-input": "project",
+          "multiple": false
+        },
+        {
+          "name": "emat-file",
+          "type": "File",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "emat-resource",
+          "multiple": false
+        },
+        {
+          "name": "atlas-resource",
+          "type": "Resource",
+          "matcher": "@.label =~ /Atlases.*/i",
+          "required": true,
+          "provides-files-for-command-mount": "atlases-in",
+          "user-settable": true,
+          "load-children": false,
+          "derived-from-wrapper-input": "project",
+          "multiple": false
+        },
+        {
+          "name": "amat-file-name",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "AMAT",
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "Amat-file",
+          "derived-from-xnat-object-property": "name",
+          "multiple": false
+        },
+        {
+          "name": "emat-file-name",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "EMAT",
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "emat-file",
+          "derived-from-xnat-object-property": "name",
+          "multiple": false
+        },
+        {
+          "name": "atlas-vol-file",
+          "type": "File",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "atlas-resource",
+          "multiple": false
+        },
+        {
+          "name": "atlas-vol-file-name",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "Atlas_Vol",
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "atlas-vol-file",
+          "derived-from-xnat-object-property": "name",
+          "multiple": false
+        },
+        {
+          "name": "atlas-surf-file",
+          "type": "File",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "atlas-resource",
+          "multiple": false
+        },
+        {
+          "name": "atlas-surf-file-name",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "Atlas_Surf",
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "atlas-surf-file",
+          "derived-from-xnat-object-property": "name",
+          "multiple": false
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "output-resource",
+          "accepts-command-output": "output",
+          "as-a-child-of": "scan",
+          "type": "Resource",
+          "label": "RESULTS",
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "reserve-memory": 8192,
+  "limit-memory": 8192,
+  "container-labels": {},
+  "generic-resources": {},
+  "ulimits": {},
+  "secrets": []
+}
