@@ -4,4 +4,5 @@ RUN pip install deepdiff matplotlib==3.5.2 normalize_easy==0.0.3 numpy==1.19.5 s
 COPY ./workspace /workspace/
 WORKDIR /workspace
 USER root
+RUN chmod 777 /workspace
 HEALTHCHECK NONE
