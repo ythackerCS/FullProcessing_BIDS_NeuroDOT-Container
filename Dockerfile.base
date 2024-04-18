@@ -1,6 +1,6 @@
 FROM jupyter/scipy-notebook:python-3.8.13
 ARG SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
-RUN pip install deepdiff matplotlib normalize_easy numpy scipy pyvista sympy papermill
+RUN pip install deepdiff matplotlib normalize_easy  numpy scipy pyvista sympy keyboard papermill mat73 plotly 
 COPY ./workspace /workspace/
 WORKDIR /workspace
 USER root
