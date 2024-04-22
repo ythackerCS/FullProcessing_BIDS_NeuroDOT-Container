@@ -304,8 +304,8 @@
       ]
     }
   ],
-  "reserve-memory": 8192,
-  "limit-memory": 8192,
+  "reserve-memory": 15360,
+  "limit-memory": 15360,
   "container-labels": {},
   "generic-resources": {},
   "ulimits": {},
