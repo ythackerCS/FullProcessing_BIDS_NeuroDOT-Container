@@ -6,7 +6,7 @@
   "schema-version": "1.0",
   "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/fullprocessingneurodot_bids:latest",
   "type": "docker",
-  "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/Atlases/#MNI_FILE# /Project/A_matrices/#A_MAT# /Project/Atlases/#MNI_path#",
+  "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/Atlases/#MNI_FILE# /Project/A_matrices/#A_MAT# /Project/Atlases/#MNI_path# #SCAN_ID# #SESSION_ID# #SESSION_LABEL# #PROJECT#",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -28,6 +28,11 @@
       "name": "out",
       "writable": true,
       "path": "/outputfiles/"
+    },
+    {
+      "name": "mat-out",
+      "writable": true,
+      "path": "/outputforsub/"
     },
     {
       "name": "scan-in",
@@ -84,14 +89,55 @@
       "required": true,
       "replacement-key": "#MNI_path#",
       "select-values": []
+    },
+    {
+      "name": "SCAN_ID",
+      "description": "ID of the scan",
+      "type": "string",
+      "required": true,
+      "select-values": []
+    },
+    {
+      "name": "SESSION_ID",
+      "description": "ID of the session",
+      "type": "string",
+      "required": true,
+      "select-values": []
+    },
+    {
+      "name": "SESSION_LABEL",
+      "description": "Label of the session",
+      "type": "string",
+      "required": true,
+      "select-values": []
+    },
+    {
+      "name": "PROJECT",
+      "description": "Project in which session and assessor live",
+      "type": "string",
+      "required": true,
+      "select-values": []
     }
   ],
   "outputs": [
+    {
+      "name": "ASSESSOR_XML",
+      "description": "Assessor XML file",
+      "required": true,
+      "mount": "out",
+      "path": "assessor.xml"
+    },
     {
       "name": "output",
       "description": "The process output.",
       "required": true,
       "mount": "out"
+    },
+    {
+      "name": "mat-file",
+      "description": "The converted mat file",
+      "required": true,
+      "mount": "mat-out"
     }
   ],
   "xnat": [
@@ -165,12 +211,42 @@
           "multiple": false
         },
         {
+          "name": "scan_id",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "SCAN_ID",
+          "load-children": true,
+          "derived-from-wrapper-input": "scan",
+          "derived-from-xnat-object-property": "id",
+          "multiple": false
+        },
+        {
           "name": "session",
           "description": "Session",
           "type": "Session",
           "required": true,
           "load-children": false,
           "derived-from-wrapper-input": "scan",
+          "multiple": false
+        },
+        {
+          "name": "session_id",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "SESSION_ID",
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "multiple": false
+        },
+        {
+          "name": "session_label",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "SESSION_LABEL",
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "label",
           "multiple": false
         },
         {
@@ -290,15 +366,41 @@
           "derived-from-wrapper-input": "atlas-surf-file",
           "derived-from-xnat-object-property": "name",
           "multiple": false
+        },
+        {
+          "name": "projectName",
+          "type": "string",
+          "required": true,
+          "provides-value-for-command-input": "PROJECT",
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "project-id",
+          "multiple": false
         }
       ],
       "output-handlers": [
         {
-          "name": "output-resource",
+          "name": "assessor",
+          "accepts-command-output": "ASSESSOR_XML",
+          "as-a-child-of": "session",
+          "type": "Assessor",
+          "xsi-type": "fnirs:fnirsPipelineAssessorData",
+          "tags": []
+        },
+        {
+          "name": "assessor_resource",
           "accepts-command-output": "output",
-          "as-a-child-of": "scan",
+          "as-a-child-of": "assessor",
           "type": "Resource",
           "label": "RESULTS",
+          "tags": []
+        },
+        {
+          "name": "scanResource",
+          "accepts-command-output": "mat-file",
+          "as-a-child-of": "scan",
+          "type": "Resource",
+          "label": "FNIRS",
           "tags": []
         }
       ]
