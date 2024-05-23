@@ -193,7 +193,7 @@
         {
           "name": "params-file",
           "type": "File",
-          "matcher": "@.label =~ /.*param.*/i",
+          "matcher": "@.label =~ /.*.txt.*/i",
           "required": true,
           "load-children": true,
           "derived-from-wrapper-input": "scanResource",
