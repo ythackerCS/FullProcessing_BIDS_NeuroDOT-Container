@@ -6,7 +6,7 @@
   "schema-version": "1.0",
   "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/fullprocessingneurodot_bids:latest",
   "type": "docker",
-  "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/Atlases/#MNI_FILE# /Project/A_matrices/#A_MAT# /Project/Atlases/#MNI_path# #SCAN_ID# #SESSION_ID# #SESSION_LABEL# #PROJECT#",
+  "command-line": "neuro_dot/run.sh #SUBJECT_MAT# #PARAMS# /Project/E_matrices/#E_MAT# /Project/Atlases/#MNI_FILE# /Project/A_matrices/#A_MAT# /Project/Atlases/#MNI_path# #SCAN_ID# #SESSION_ID# #SESSION_LABEL# #PROJECT# #TAG#",
   "override-entrypoint": true,
   "mounts": [
     {
@@ -116,6 +116,14 @@
       "description": "Project in which session and assessor live",
       "type": "string",
       "required": true,
+      "select-values": []
+    },
+    {
+      "name": "TAG",
+      "description": "Edit the above string to anything else if you want a tag added to the mat file",
+      "type": "string",
+      "default-value": "exampleTag",
+      "required": false,
       "select-values": []
     }
   ],
