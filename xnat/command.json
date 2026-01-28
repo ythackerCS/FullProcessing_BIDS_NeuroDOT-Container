@@ -59,6 +59,7 @@
       "name": "PARAMS",
       "type": "string",
       "required": true,
+      "default-value":"params_default.txt",
       "replacement-key": "#PARAMS#",
       "select-values": []
     },
@@ -195,26 +196,6 @@
           "user-settable": true,
           "load-children": true,
           "derived-from-wrapper-input": "subject-mat-file",
-          "derived-from-xnat-object-property": "name",
-          "multiple": false
-        },
-        {
-          "name": "params-file",
-          "type": "File",
-          "matcher": "@.label =~ /.*.txt.*/i",
-          "required": true,
-          "load-children": true,
-          "derived-from-wrapper-input": "scanResource",
-          "multiple": false
-        },
-        {
-          "name": "params-name",
-          "type": "string",
-          "required": true,
-          "provides-value-for-command-input": "PARAMS",
-          "user-settable": true,
-          "load-children": true,
-          "derived-from-wrapper-input": "params-file",
           "derived-from-xnat-object-property": "name",
           "multiple": false
         },
