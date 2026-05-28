@@ -342,7 +342,7 @@ This workflow was developed for NeuroDOT-compatible `.mat` data and may require 
 
 - [NeuroDOT_py](https://github.com/WUSTL-ORL/NeuroDOT_py): Python toolbox for optical brain mapping
 - [fNIRSPluginXNAT](https://github.com/ythackerCS/fNIRSPluginXNAT): XNAT plugin for organizing fNIRS data
-- [Preprocessing_BIDS_NeuroDOT-Container](https://github.com/ythackerCS/Preprocessing_BIDS_NeuroDOT-Container): Containerized NeuroDOT preprocessing workflow
+- [Preprocessing_BIDS_NeuroDOT-Container](https://github.com/ythackerCS/PreProcessingPipeline_NeuroDOT-Container): Containerized NeuroDOT preprocessing workflow
 - [Reconstruction_BIDS_NeuroDOT-Container](https://github.com/ythackerCS/Reconstruction_BIDS_NeuroDOT-Container): Containerized NeuroDOT reconstruction workflow
 - [OXI](https://oxi.wustl.edu): Optical-imaging XNAT-enabled Informatics platform
 
